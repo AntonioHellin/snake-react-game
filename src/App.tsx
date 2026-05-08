@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 const BOARD_SIZE = 20
-const BASE_SPEED = 130
-const MIN_SPEED = 70
+
+type Difficulty = 'EASY' | 'NORMAL' | 'HARD'
+
+const DIFFICULTY_SETTINGS: Record<Difficulty, { base: number; min: number; decrement: number; label: string }> = {
+  EASY: { base: 180, min: 100, decrement: 2, label: 'Fácil' },
+  NORMAL: { base: 130, min: 70, decrement: 3, label: 'Normal' },
+  HARD: { base: 90, min: 40, decrement: 4, label: 'Difícil' },
+}
 
 type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
 type Point = { x: number; y: number }
@@ -62,13 +68,30 @@ function App() {
   const [direction, setDirection] = useState<Direction>('RIGHT')
   const [queuedDirection, setQueuedDirection] = useState<Direction>('RIGHT')
   const [score, setScore] = useState(0)
+  const [difficulty, setDifficulty] = useState<Difficulty>('NORMAL')
+  const [highScores, setHighScores] = useState<Record<Difficulty, number>>(() => {
+    try {
+      const saved = localStorage.getItem('snakeHighScores')
+      return saved ? JSON.parse(saved) : { EASY: 0, NORMAL: 0, HARD: 0 }
+    } catch {
+      return { EASY: 0, NORMAL: 0, HARD: 0 }
+    }
+  })
   const [isRunning, setIsRunning] = useState(false)
   const [isGameOver, setIsGameOver] = useState(false)
 
-  const speed = useMemo(
-    () => Math.max(MIN_SPEED, BASE_SPEED - score * 3),
-    [score],
-  )
+  const speed = useMemo(() => {
+    const settings = DIFFICULTY_SETTINGS[difficulty]
+    return Math.max(settings.min, settings.base - score * settings.decrement)
+  }, [score, difficulty])
+
+  useEffect(() => {
+    if (score > highScores[difficulty]) {
+      const newHighScores = { ...highScores, [difficulty]: score }
+      setHighScores(newHighScores)
+      localStorage.setItem('snakeHighScores', JSON.stringify(newHighScores))
+    }
+  }, [score, difficulty, highScores])
 
   const resetGame = useCallback(() => {
     setSnake(INITIAL_SNAKE)
@@ -195,20 +218,42 @@ function App() {
     <main className="snake-app">
       <header className="hud">
         <h1>Snake</h1>
-        <p className="score">
-          Puntuación: <strong>{score}</strong>
-        </p>
-        <div className="actions">
-          <button
-            type="button"
-            onClick={() => setIsRunning((running) => !running)}
-            disabled={isGameOver}
+        <div className="stats">
+          <p className="score">
+            Puntuación: <strong>{score}</strong>
+          </p>
+          <p className="high-score">
+            Récord: <strong>{highScores[difficulty]}</strong>
+          </p>
+        </div>
+        <div className="controls-group">
+          <select
+            className="difficulty-select"
+            value={difficulty}
+            onChange={(e) => {
+              setDifficulty(e.target.value as Difficulty)
+              resetGame()
+            }}
+            disabled={isRunning && !isGameOver}
           >
-            {isRunning ? 'Pausar' : 'Jugar'}
-          </button>
-          <button type="button" className="secondary" onClick={resetGame}>
-            Reiniciar
-          </button>
+            {(Object.keys(DIFFICULTY_SETTINGS) as Difficulty[]).map((level) => (
+              <option key={level} value={level}>
+                {DIFFICULTY_SETTINGS[level].label}
+              </option>
+            ))}
+          </select>
+          <div className="actions">
+            <button
+              type="button"
+              onClick={() => setIsRunning((running) => !running)}
+              disabled={isGameOver}
+            >
+              {isRunning ? 'Pausar' : 'Jugar'}
+            </button>
+            <button type="button" className="secondary" onClick={resetGame}>
+              Reiniciar
+            </button>
+          </div>
         </div>
       </header>
 

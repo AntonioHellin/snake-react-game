@@ -18,10 +18,49 @@
   font-size: clamp(1.6rem, 3.2vw, 2.2rem);
 }
 
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
 .score {
   margin: 0;
   color: #d2ffe3;
   font-size: 1rem;
+}
+
+.high-score {
+  margin: 0;
+  color: #a8d5ba;
+  font-size: 0.85rem;
+}
+
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.difficulty-select {
+  padding: 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #162a1e;
+  color: #d2ffe3;
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.difficulty-select:focus {
+  border-color: #68ff8f;
+}
+
+.difficulty-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .actions {
