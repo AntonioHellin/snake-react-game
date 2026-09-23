@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# 🐍 Snake React Game (`snake-react-game`)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive, arcade-style Snake game built with modern React 19, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Project Overview
 
-## React Compiler
+**Snake React Game** brings the classic retro arcade experience to the modern web. Built with React hooks and performant grid rendering, it features real-time collision detection, dynamic difficulty scaling, and high score tracking persisted locally.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Repository Naming Analysis
+- **Recommended Repository Name**: `snake-react-game`
+- **Naming Formula**: **Formula A** (`[domain/product]-[core-function]`)
+- **Rationale**: Replaces the snake_case `snake_react` with standard kebab-case specifying product theme (`snake`), framework (`react`), and deliverable function (`game`).
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Classic Grid Mechanics**: 20x20 tile board with non-overlapping food generation and boundary collision physics.
+- **Multiple Difficulty Levels**:
+  - **Easy**: Relaxed base pace with gentle speed increments.
+  - **Normal**: Standard balanced progression.
+  - **Hard**: Fast-paced reflexes with aggressive speed acceleration per apple eaten.
+- **Persistent High Scores**: High scores tracked and stored separately per difficulty in browser `localStorage`.
+- **Keyboard Controls**: Intuitive controls supporting standard `Arrow Keys` or `WASD` navigation, `Spacebar` pause/resume, and `Enter` quick restart.
+- **Pure Client Execution**: Zero external runtime network dependencies; runs 100% offline.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Prerequisites
+
+- **Node.js**: `>= 18.0.0`
+- **Package Manager**: `npm`, `pnpm`, or `yarn`
+
+---
+
+## Installation and Run
+
+### 1. Install Dependencies
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Start Development Server
+```bash
+npm run dev
 ```
+Open `http://localhost:5173` in your browser.
+
+### 3. Build for Production
+```bash
+npm run build
+```
+
+### 4. Preview Production Build
+```bash
+npm run preview
+```
+
+---
+
+## Usage & Controls
+
+| Action | Primary Key | Secondary Key |
+| :--- | :--- | :--- |
+| **Move Up** | `ArrowUp` | `W` |
+| **Move Down** | `ArrowDown` | `S` |
+| **Move Left** | `ArrowLeft` | `A` |
+| **Move Right** | `ArrowRight` | `D` |
+| **Pause / Resume** | `Spacebar` | — |
+| **Restart Game** | `Enter` | — |
+
+---
+
+## Defensive Security Architecture
+
+- **Defensive LocalStorage Deserialization**: High scores are defensively validated and numeric-cast upon retrieval to guard against corrupted or tampered browser storage values.
+- **DOM Injection Protection**: Dynamic board cells and HUD scores are rendered purely through typed React JSX elements without raw HTML insertion.
+- **Boundary Validation**: Head movements and self-intersection tests are strictly guarded with multi-condition checks preventing memory index or state anomalies.
+
+---
+
+## License
+
+Proprietary. All rights reserved. Not licensed for redistribution, public sublicensing, or resale.

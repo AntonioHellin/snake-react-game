@@ -1,6 +1,7 @@
 {
-  "name": "snake_react",
+  "name": "snake-react-game",
   "private": true,
+  "license": "UNLICENSED",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

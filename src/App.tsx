@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
+
 const BOARD_SIZE = 20
 
 type Difficulty = 'EASY' | 'NORMAL' | 'HARD'
 
 const DIFFICULTY_SETTINGS: Record<Difficulty, { base: number; min: number; decrement: number; label: string }> = {
-  EASY: { base: 180, min: 100, decrement: 2, label: 'Fácil' },
+  EASY: { base: 180, min: 100, decrement: 2, label: 'Easy' },
   NORMAL: { base: 130, min: 70, decrement: 3, label: 'Normal' },
-  HARD: { base: 90, min: 40, decrement: 4, label: 'Difícil' },
+  HARD: { base: 90, min: 40, decrement: 4, label: 'Hard' },
 }
 
 type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
@@ -44,7 +45,7 @@ const DIRECTION_BY_KEY: Record<string, Direction> = {
   d: 'RIGHT',
 }
 
-const createFood = (snake: Point[]) => {
+const createFood = (snake: Point[]): Point => {
   let food: Point = { x: 0, y: 0 }
   let isOverlappingSnake = false
 
@@ -72,7 +73,17 @@ function App() {
   const [highScores, setHighScores] = useState<Record<Difficulty, number>>(() => {
     try {
       const saved = localStorage.getItem('snakeHighScores')
-      return saved ? JSON.parse(saved) : { EASY: 0, NORMAL: 0, HARD: 0 }
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed && typeof parsed === 'object') {
+          return {
+            EASY: Number(parsed.EASY) || 0,
+            NORMAL: Number(parsed.NORMAL) || 0,
+            HARD: Number(parsed.HARD) || 0,
+          }
+        }
+      }
+      return { EASY: 0, NORMAL: 0, HARD: 0 }
     } catch {
       return { EASY: 0, NORMAL: 0, HARD: 0 }
     }
@@ -89,7 +100,11 @@ function App() {
     if (score > highScores[difficulty]) {
       const newHighScores = { ...highScores, [difficulty]: score }
       setHighScores(newHighScores)
-      localStorage.setItem('snakeHighScores', JSON.stringify(newHighScores))
+      try {
+        localStorage.setItem('snakeHighScores', JSON.stringify(newHighScores))
+      } catch {
+        /* storage full or private browsing mode */
+      }
     }
   }, [score, difficulty, highScores])
 
@@ -220,10 +235,10 @@ function App() {
         <h1>Snake</h1>
         <div className="stats">
           <p className="score">
-            Puntuación: <strong>{score}</strong>
+            Score: <strong>{score}</strong>
           </p>
           <p className="high-score">
-            Récord: <strong>{highScores[difficulty]}</strong>
+            High Score: <strong>{highScores[difficulty]}</strong>
           </p>
         </div>
         <div className="controls-group">
@@ -235,6 +250,7 @@ function App() {
               resetGame()
             }}
             disabled={isRunning && !isGameOver}
+            aria-label="Select difficulty"
           >
             {(Object.keys(DIFFICULTY_SETTINGS) as Difficulty[]).map((level) => (
               <option key={level} value={level}>
@@ -248,25 +264,25 @@ function App() {
               onClick={() => setIsRunning((running) => !running)}
               disabled={isGameOver}
             >
-              {isRunning ? 'Pausar' : 'Jugar'}
+              {isRunning ? 'Pause' : 'Play'}
             </button>
             <button type="button" className="secondary" onClick={resetGame}>
-              Reiniciar
+              Reset
             </button>
           </div>
         </div>
       </header>
 
-      <section className="board" aria-label="Tablero de Snake">
+      <section className="board" aria-label="Snake game board">
         {boardCells}
       </section>
 
       <p className="status">
         {isGameOver
-          ? 'Perdiste. Pulsa Reiniciar o Enter para volver a jugar.'
+          ? 'Game Over. Press Reset or Enter to play again.'
           : isRunning
-            ? 'Muévete con flechas o WASD. Barra espaciadora para pausar.'
-            : 'Pulsa Jugar o una flecha para empezar.'}
+            ? 'Move with Arrow keys or WASD. Spacebar to pause.'
+            : 'Press Play or an arrow key to start.'}
       </p>
     </main>
   )
