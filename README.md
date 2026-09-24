@@ -75,7 +75,3 @@ npm run preview
 - **Boundary Validation**: Head movements and self-intersection tests are strictly guarded with multi-condition checks preventing memory index or state anomalies.
 
 ---
-
-## License
-
-Proprietary. All rights reserved. Not licensed for redistribution, public sublicensing, or resale.
